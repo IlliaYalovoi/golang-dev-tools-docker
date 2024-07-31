@@ -1,0 +1,22 @@
+name: Update Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-image:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKER_EMAIL }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image with :latest tag
+        run: |
+          docker build -t golang-dev-tools .
+          docker tag golang-dev-tools ${{ vars.DOCKER_USERNAME }}/golang-dev-tools:latest
+          docker push ${{ vars.DOCKER_USERNAME }}/golang-dev-tools:latest
